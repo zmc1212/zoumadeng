@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- SITE_TITLE(浏览器标签) -->
+<title>走马灯 · 热气推轮人马宛转 — 《燕京岁时记》机构复刻</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+<div id="sheet">
+  <div id="stage"></div>
+
+  <!-- 图纸虚线内框 -->
+  <div id="frame-dashed"></div>
+
+  <!-- 左上标题卡(站点定制:机构名 + 出处一句话 + 操作提示) -->
+  <div id="card-title" class="card">
+    <div class="t1">走马灯&ensp;·&ensp;ZOU MA DENG&ensp;·&ensp;《燕京岁时记》制式</div>
+    <div class="t2">「以烛嘘之,则车驰马骤」—— 热气推叶轮,烛数调转速,ω=k·n 可验算</div>
+    <div class="t3">拖动旋转 · 滚轮缩放 · 点击零件看标签 · 空格暂停 · R 重播 · 数字键 1-8 跳阶段 · B 图纸</div>
+  </div>
+
+  <!-- 右上状态卡(站点定制行,通用 id:st-a / st-b / st-c) -->
+  <div id="card-status" class="card">
+    <div class="k">MODE</div>
+    <div class="mode" id="st-mode">—</div>
+    <div class="row"><span class="k">烛数</span><b id="st-a">—</b></div>
+    <div class="row"><span class="k">转速</span><b id="st-b">—</b></div>
+    <div class="row"><span class="k">ω</span><b id="st-c">—</b></div>
+  </div>
+
+  <!-- 底部阶段胶囊 -->
+  <div id="phase-pill"><i id="phase-dot"></i><span id="phase-text">STANDBY</span></div>
+
+  <!-- 底部四角(站点定制) -->
+  <div id="corner-left" class="corner">HOT-AIR TURBINE · 12 叶 45° · ω=k·n · τ≈1.6s</div>
+  <div id="corner-right" class="corner">机构复刻 · No.19 · REV A</div>
+
+  <!-- 底部仪表盘(dashboard-core 按 MECH.DASH.panels 生成) -->
+  <div id="dash"></div>
+
+  <!-- 启动失败提示 -->
+  <div id="boot-error" hidden>
+    <b>页面未能启动</b>
+    <p id="boot-error-detail">脚本加载失败。</p>
+    <p>双击打不开时，请在本目录运行：<code>python3 tools/serve.py 8139</code>，然后访问 <code>http://127.0.0.1:8139</code></p>
+  </div>
+</div>
+
+<!-- 引擎层(各站一致,勿改) -->
+<script src="vendor/three.min.js"></script>
+<script src="src/textures.js"></script>
+<script src="src/scene.js"></script>
+<script src="src/orbit.js"></script>
+<script src="src/labels.js"></script>
+<script src="src/parts-core.js"></script>
+<script src="src/timeline-core.js"></script>
+<script src="src/dashboard-core.js"></script>
+<script src="src/blueprint-core.js"></script>
+<!-- 站点层(顺序固定:mech → parts → timeline → dashboard → blueprint → main) -->
+<script src="src/mech.js"></script>
+<script src="src/parts.js"></script>
+<script src="src/timeline.js"></script>
+<script src="src/dashboard.js"></script>
+<script src="src/blueprint.js"></script>
+<script src="src/main.js"></script>
+<script>
+(function () {
+  var banner = document.getElementById("boot-error");
+  function show(msg) {
+    if (!banner.hidden) return;
+    document.getElementById("boot-error-detail").textContent = msg || "未知错误";
+    banner.hidden = false;
+  }
+  window.MECH_SHOW_BOOT_ERROR = show;
+  window.addEventListener("error", function (e) {
+    show((e.message || "脚本错误") + (e.filename ? "  @" + e.filename.split("/").pop() + ":" + (e.lineno || 0) : ""));
+  });
+  setTimeout(function () {
+    if (!window.MECH_BOOTED) show("入口脚本未能完成初始化（可能被浏览器拦截或路径错误）。");
+  }, 6000);
+})();
+</script>
+</body>
+</html>
